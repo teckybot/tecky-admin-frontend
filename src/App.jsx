@@ -4,7 +4,7 @@ import "./App.css";
 import Home from "./Pages/Home";
 import Navbar from "./Components/Navbar";
 import AddPositions from "./Pages/AddPositions"; 
-
+import ContactDashboard from "./Pages/ContactUs";
 
 function App() {
   return (
@@ -13,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} /> 
         <Route path="/add-positions" element={<AddPositions />} />
+        <Route path="/contact" element={<ContactDashboard />} />
       </Routes>
     </BrowserRouter>
   );
