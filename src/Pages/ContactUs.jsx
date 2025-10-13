@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllContacts } from "../api/contactApi";
-import { subscribeToContactEvents } from "../api/contactSocket";
+import { getAllContacts, subscribeToContactEvents } from "../api/contactApi";
 
 export default function ContactDashboard() {
   const [contacts, setContacts] = useState([]);

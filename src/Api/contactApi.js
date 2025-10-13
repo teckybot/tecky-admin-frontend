@@ -1,16 +1,13 @@
 import axios from "axios";
+import { socket } from "./socket.js";
 
-const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL + "/contacts",
-});
+const API = axios.create({ baseURL: import.meta.env.VITE_API_URL + "/contacts" });
 
-// GET all contacts
-export const getAllContacts = async () => {
-  const res = await API.get("/");
-  return res.data;
-};
+export const getAllContacts = () => API.get("/").then(res => res.data);
+export const submitContact = (data) => API.post("/", data);
 
-// POST new contact (for form submission)
-export const submitContact = async (contactData) => {
-  return await axios.post(import.meta.env.VITE_API_URL + "/contact", contactData);
+export const subscribeToContactEvents = (callbacks) => {
+  if (callbacks.onContactCreated) socket.on("contactCreated", callbacks.onContactCreated);
+
+  return () => { socket.off("contactCreated"); };
 };
