@@ -1,19 +1,23 @@
-import { useState } from 'react'
-import './App.css'
+import React, { useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom"; // ✅ import these
+import "./App.css";
+import Home from "./Pages/Home"; // ✅ make sure you have a Home component
+import Navbar from "./Components/Navbar";
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div class="flex items-center justify-center h-screen">
-        <p class="text-center text-3xl font-semibold">
-          Vite + TailwindCSS + Antd Setup
-        </p>
-      </div>
-
-    </>
-  )
+    <BrowserRouter>
+    <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} /> {/* ✅ route to Home page */}
+        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
