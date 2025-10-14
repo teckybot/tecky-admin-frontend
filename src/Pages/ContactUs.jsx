@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Table, Drawer, Typography, Pagination, Select, DatePicker, Card, Tag, Button } from "antd";
-import { getAllContacts } from "../Api/contactApi";
+import { Table, Drawer, Typography, Pagination, Select, DatePicker, Card, Tag, Button, message } from "antd";
+import { getAllContacts, markContactAsRead } from "../Api/contactApi";
 import { subscribeToContactEvents } from "../Api/contactApi";
 import dayjs from "dayjs";
-import { 
-  SearchOutlined, 
-  FilterOutlined, 
-  MailOutlined, 
-  PhoneOutlined, 
+import {
+  SearchOutlined,
+  FilterOutlined,
+  MailOutlined,
+  PhoneOutlined,
   CalendarOutlined,
-  ReloadOutlined 
+  ReloadOutlined
 } from "@ant-design/icons";
 
 const { Text, Title } = Typography;
@@ -28,15 +28,21 @@ export default function ContactDashboard() {
   const pageSize = 8;
 
   useEffect(() => {
-    fetchContacts();
+    fetchContacts()
 
     const unsubscribe = subscribeToContactEvents({
       onContactCreated: (contact) =>
         setContacts((prev) => [{ ...contact, read: false }, ...prev]),
+      onContactUpdated: (contact) => {
+        setContacts((prev) =>
+          prev.map(c => c._id === contact._id ? contact : c)
+        );
+      }
     });
 
     return () => unsubscribe();
   }, []);
+
 
   useEffect(() => {
     applyFilters();
@@ -44,8 +50,9 @@ export default function ContactDashboard() {
 
   const fetchContacts = async () => {
     const data = await getAllContacts();
-    setContacts(data.map((c) => ({ ...c, read: false })));
+    setContacts(data);
   };
+
 
   const applyFilters = () => {
     let filtered = [...contacts];
@@ -60,7 +67,7 @@ export default function ContactDashboard() {
 
     // Status filter (read/unread)
     if (statusFilter !== "all") {
-      filtered = filtered.filter(contact => 
+      filtered = filtered.filter(contact =>
         statusFilter === "unread" ? !contact.read : contact.read
       );
     }
@@ -80,15 +87,31 @@ export default function ContactDashboard() {
     setCurrentPage(1); // Reset to first page when filters change
   };
 
-  const handleRowClick = (record) => {
+  const handleRowClick = async (record) => {
     setSelectedContact(record);
     setDrawerVisible(true);
+
+    // Optimistically update UI
     setContacts((prev) =>
       prev.map((c) =>
         c._id === record._id ? { ...c, read: true } : c
       )
     );
+
+    // Call backend
+    try {
+      await markContactAsRead(record._id);
+    } catch (err) {
+      message.error("Failed to mark as read", err);
+      // Optionally revert UI if failed
+      setContacts((prev) =>
+        prev.map((c) =>
+          c._id === record._id ? { ...c, read: false } : c
+        )
+      );
+    }
   };
+
 
   const clearFilters = () => {
     setDateRange([]);
@@ -118,10 +141,9 @@ export default function ContactDashboard() {
       width: 200,
       render: (text, record) => (
         <div className="flex items-center gap-3">
-          <div 
-            className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
-              !record.read ? 'bg-blue-500' : 'bg-gray-400'
-            }`}
+          <div
+            className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${!record.read ? 'bg-blue-500' : 'bg-gray-400'
+              }`}
           >
             {getInitials(text)}
           </div>
@@ -172,8 +194,8 @@ export default function ContactDashboard() {
       width: 100,
       render: (text, record) => (
         <div className="text-right">
-          <Text 
-            strong={!record.read} 
+          <Text
+            strong={!record.read}
             className={`block ${!record.read ? 'text-gray-900' : 'text-gray-500'}`}
           >
             {dayjs(text).format("DD MMM")}
@@ -207,9 +229,9 @@ export default function ContactDashboard() {
                 </Text>
               </div>
             </div>
-            
-            <Button 
-              icon={<ReloadOutlined />} 
+
+            <Button
+              icon={<ReloadOutlined />}
               onClick={fetchContacts}
               className="flex items-center"
             >
@@ -277,9 +299,8 @@ export default function ContactDashboard() {
             pagination={false}
             onRow={(record) => ({
               onClick: () => handleRowClick(record),
-              className: `cursor-pointer transition-all duration-200 hover:bg-blue-50 border-b border-gray-100 ${
-                !record.read ? 'bg-blue-25' : ''
-              }`,
+              className: `cursor-pointer transition-all duration-200 hover:bg-blue-50 border-b border-gray-100 ${!record.read ? 'bg-blue-25' : ''
+                }`,
               style: {
                 padding: "16px 20px",
               },
@@ -292,8 +313,8 @@ export default function ContactDashboard() {
                     No messages found
                   </Title>
                   <Text type="secondary">
-                    {contacts.length === 0 
-                      ? "No contact messages have been received yet." 
+                    {contacts.length === 0
+                      ? "No contact messages have been received yet."
                       : "Try adjusting your filters to see more results."}
                   </Text>
                 </div>
@@ -348,9 +369,9 @@ export default function ContactDashboard() {
         open={drawerVisible}
         className="rounded-l-2xl"
         styles={{
-          body: { 
-            backgroundColor: "#fafafa", 
-            padding: "24px" 
+          body: {
+            backgroundColor: "#fafafa",
+            padding: "24px"
           },
           header: {
             padding: "24px 24px 16px 24px",
