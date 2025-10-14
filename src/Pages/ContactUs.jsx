@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Drawer, Typography, Pagination, Select, DatePicker, Card, Tag, Button } from "antd";
-import { getAllContacts } from "../api/contactApi";
-import { subscribeToContactEvents } from "../api/contactApi";
+import { getAllContacts } from "../Api/contactApi";
+import { subscribeToContactEvents } from "../Api/contactApi";
 import dayjs from "dayjs";
 import { 
   SearchOutlined, 
