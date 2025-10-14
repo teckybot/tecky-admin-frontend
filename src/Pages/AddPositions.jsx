@@ -156,7 +156,7 @@ const AddPositions = () => {
               <td className="border p-2">{job.postedOn}</td>
               <td className="border p-2">
                 {job.pdfUrl && (
-                  <a href={`http://localhost:5000${job.pdfUrl}`} target="_blank" rel="noreferrer">
+                  <a href={`${import.meta.env.VITE_BACKEND_URL}${job.pdfUrl}`} target="_blank" rel="noreferrer">
                     View PDF
                   </a>
                 )}
