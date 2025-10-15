@@ -5,6 +5,7 @@ import Home from "./Pages/Home";
 import Navbar from "./Components/Navbar";
 import AddPositions from "./Pages/AddPositions"; 
 import ContactDashboard from "./Pages/ContactUs";
+import ViewApplications from "./Pages/ViewApplications";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Home />} /> 
         <Route path="/add-positions" element={<AddPositions />} />
         <Route path="/contact" element={<ContactDashboard />} />
+        <Route path="/applications" element={<ViewApplications />} />
       </Routes>
     </BrowserRouter>
   );

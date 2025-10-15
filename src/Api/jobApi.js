@@ -5,6 +5,10 @@ const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL + "/jobs",
 });
 
+const APPLICATION_API = axios.create({
+  baseURL: import.meta.env.VITE_API_URL + "/job-applications",
+});
+
 // REST API functions
 export const createJob = async (formData) => {
   return await API.post("/", formData, {
@@ -26,6 +30,13 @@ export const updateJob = async (jobId, formData) => {
 export const deleteJob = async (jobId) => {
   return await API.delete(`/${jobId}`);
 };
+
+// Fetch all job applications
+export const getAllApplications = async (jobId) => {
+  const res = await APPLICATION_API.get("/", { params: { jobId } });
+  return res.data;
+};
+
 
 // Real-time subscriptions
 export const subscribeToJobEvents = (callbacks) => {
