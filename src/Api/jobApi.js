@@ -37,6 +37,11 @@ export const getAllApplications = async (jobId) => {
   return res.data;
 };
 
+export const updateApplicationStatus = async (id, data) => {
+  const res = await APPLICATION_API.patch(`/applications/${id}/status`, data);
+  return res.data;
+};
+
 
 // Real-time subscriptions
 export const subscribeToJobEvents = (callbacks) => {
