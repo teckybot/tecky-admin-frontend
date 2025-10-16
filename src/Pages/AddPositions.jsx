@@ -130,7 +130,7 @@ const AddPositions = () => {
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: '1200px',padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       {/* Header */}
       <div style={{ marginBottom: '30px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
@@ -199,73 +199,91 @@ const AddPositions = () => {
         </div>
       )}
 
-      {/* Jobs List - Mobile Cards */}
-      <div style={{ display: 'block' }}>
+      {/* Jobs Grid - Responsive Layout */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+        gap: '20px',
+        alignItems: 'stretch'
+      }}>
         {!loading && filteredJobs.map((job) => (
           <div key={job.jobId} style={{
             backgroundColor: 'white',
             border: '1px solid #e5e7eb',
             borderRadius: '12px',
             padding: '20px',
-            marginBottom: '16px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
-              <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '600', margin: '0 0 12px 0', color: '#1f2937' }}>
-                  {job.position}
-                </h3>
-                
-                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '12px' }}>
-                  <span style={{ 
-                    backgroundColor: '#dbeafe', 
-                    color: '#1e40af', 
-                    padding: '4px 8px', 
-                    borderRadius: '6px', 
-                    fontSize: '12px',
-                    fontWeight: '500'
-                  }}>
-                    {job.jobId}
-                  </span>
-                  <span style={{ 
-                    backgroundColor: '#dcfce7', 
-                    color: '#166534', 
-                    padding: '4px 8px', 
-                    borderRadius: '6px', 
-                    fontSize: '12px',
-                    fontWeight: '500'
-                  }}>
-                    {job.location}
-                  </span>
-                </div>
-
-                <div style={{ marginBottom: '12px' }}>
-                  <strong style={{ color: '#374151', fontSize: '14px' }}>Experience Required:</strong>
-                  <p style={{ color: '#6b7280', margin: '4px 0 0 0', fontSize: '14px' }}>{job.experience}</p>
-                </div>
-
-                <div style={{ color: '#6b7280', fontSize: '12px', marginBottom: '12px' }}>
-                  Posted on: {formatDate(job.postedOn)}
-                </div>
-
-                {job.pdfUrl && (
-                  <button
-                    onClick={() => handleViewPdf(job.pdfUrl)}
-                    style={{
-                      backgroundColor: '#3b82f6',
-                      color: 'white',
-                      border: 'none',
-                      padding: '8px 16px',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      fontSize: '14px'
-                    }}
-                  >
-                    📄 View Job Description
-                  </button>
-                )}
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+            transition: 'transform 0.2s, box-shadow 0.2s'
+          }} className="job-card">
+            <div style={{ flex: 1 }}>
+              <h3 style={{ 
+                fontSize: '18px', 
+                fontWeight: '600', 
+                margin: '0 0 12px 0', 
+                color: '#1f2937',
+                lineHeight: '1.4'
+              }}>
+                {job.position}
+              </h3>
+              
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
+                <span style={{ 
+                  backgroundColor: '#dbeafe', 
+                  color: '#1e40af', 
+                  padding: '4px 8px', 
+                  borderRadius: '6px', 
+                  fontSize: '12px',
+                  fontWeight: '500'
+                }}>
+                  {job.jobId}
+                </span>
+                <span style={{ 
+                  backgroundColor: '#dcfce7', 
+                  color: '#166534', 
+                  padding: '4px 8px', 
+                  borderRadius: '6px', 
+                  fontSize: '12px',
+                  fontWeight: '500'
+                }}>
+                  {job.location}
+                </span>
               </div>
 
+              <div style={{ marginBottom: '16px' }}>
+                <strong style={{ color: '#374151', fontSize: '14px' }}>Experience Required:</strong>
+                <p style={{ color: '#6b7280', margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.5' }}>
+                  {job.experience}
+                </p>
+              </div>
+
+              <div style={{ color: '#6b7280', fontSize: '12px', marginBottom: '16px' }}>
+                Posted on: {formatDate(job.postedOn)}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {job.pdfUrl && (
+                <button
+                  onClick={() => handleViewPdf(job.pdfUrl)}
+                  style={{
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 16px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    width: '100%'
+                  }}
+                >
+                  📄 View Job Description
+                </button>
+              )}
+              
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button
                   onClick={() => handleEdit(job)}
@@ -273,10 +291,12 @@ const AddPositions = () => {
                     backgroundColor: '#f59e0b',
                     color: 'white',
                     border: 'none',
-                    padding: '8px 12px',
+                    padding: '10px 16px',
                     borderRadius: '6px',
                     cursor: 'pointer',
-                    fontSize: '12px'
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    flex: 1
                   }}
                 >
                   Edit
@@ -287,10 +307,12 @@ const AddPositions = () => {
                     backgroundColor: '#ef4444',
                     color: 'white',
                     border: 'none',
-                    padding: '8px 12px',
+                    padding: '10px 16px',
                     borderRadius: '6px',
                     cursor: 'pointer',
-                    fontSize: '12px'
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    flex: 1
                   }}
                 >
                   Delete
@@ -580,6 +602,30 @@ const AddPositions = () => {
           @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+          }
+          
+          .job-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          }
+          
+          /* Responsive grid for different screen sizes */
+          @media (min-width: 1024px) {
+            .job-grid-container {
+              grid-template-columns: repeat(3, 1fr);
+            }
+          }
+          
+          @media (max-width: 1023px) and (min-width: 768px) {
+            .job-grid-container {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+          
+          @media (max-width: 767px) {
+            .job-grid-container {
+              grid-template-columns: 1fr;
+            }
           }
         `}
       </style>
