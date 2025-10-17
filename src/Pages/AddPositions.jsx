@@ -8,6 +8,7 @@ const AddPositions = () => {
     position: "",
     location: "",
     experience: "",
+    openings: "",
     pdf: null,
   });
   const [editingJobId, setEditingJobId] = useState(null);
@@ -48,6 +49,8 @@ const AddPositions = () => {
   const handleChange = (e) => {
     if (e.target.name === "pdf") {
       setFormData({ ...formData, pdf: e.target.files[0] });
+    } else if (e.target.name === "openings") {
+      setFormData({ ...formData, [e.target.name]: Math.max(1, parseInt(e.target.value)) });
     } else {
       setFormData({ ...formData, [e.target.name]: e.target.value });
     }
@@ -60,6 +63,7 @@ const AddPositions = () => {
     data.append("position", formData.position);
     data.append("location", formData.location);
     data.append("experience", formData.experience);
+    data.append("openings", formData.openings);
     if (formData.pdf) data.append("pdf", formData.pdf);
 
     try {
@@ -71,7 +75,7 @@ const AddPositions = () => {
         await createJob(data);
         alert("Job created successfully");
       }
-      setFormData({ jobId: "", position: "", location: "", experience: "", pdf: null });
+      setFormData({ jobId: "", position: "", location: "", experience: "", openings: "", pdf: null });
       setShowModal(false);
       fetchJobs(); // Refresh the list
     } catch (err) {
@@ -87,6 +91,7 @@ const AddPositions = () => {
       position: job.position,
       location: job.location,
       experience: job.experience,
+      openings: job.openings,
       pdf: null,
     });
     setShowModal(true);
@@ -130,7 +135,7 @@ const AddPositions = () => {
   };
 
   return (
-    <div style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: '1200px',padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: '1200px', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       {/* Header */}
       <div style={{ marginBottom: '30px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
@@ -186,12 +191,12 @@ const AddPositions = () => {
       {/* Loading State */}
       {loading && (
         <div style={{ textAlign: 'center', padding: '40px' }}>
-          <div style={{ 
-            width: '40px', 
-            height: '40px', 
-            border: '3px solid #f3f4f6', 
-            borderTop: '3px solid #3b82f6', 
-            borderRadius: '50%', 
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '3px solid #f3f4f6',
+            borderTop: '3px solid #3b82f6',
+            borderRadius: '50%',
             animation: 'spin 1s linear infinite',
             margin: '0 auto 16px auto'
           }}></div>
@@ -219,32 +224,32 @@ const AddPositions = () => {
             transition: 'transform 0.2s, box-shadow 0.2s'
           }} className="job-card">
             <div style={{ flex: 1 }}>
-              <h3 style={{ 
-                fontSize: '18px', 
-                fontWeight: '600', 
-                margin: '0 0 12px 0', 
+              <h3 style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                margin: '0 0 12px 0',
                 color: '#1f2937',
                 lineHeight: '1.4'
               }}>
                 {job.position}
               </h3>
-              
+
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
-                <span style={{ 
-                  backgroundColor: '#dbeafe', 
-                  color: '#1e40af', 
-                  padding: '4px 8px', 
-                  borderRadius: '6px', 
+                <span style={{
+                  backgroundColor: '#dbeafe',
+                  color: '#1e40af',
+                  padding: '4px 8px',
+                  borderRadius: '6px',
                   fontSize: '12px',
                   fontWeight: '500'
                 }}>
                   {job.jobId}
                 </span>
-                <span style={{ 
-                  backgroundColor: '#dcfce7', 
-                  color: '#166534', 
-                  padding: '4px 8px', 
-                  borderRadius: '6px', 
+                <span style={{
+                  backgroundColor: '#dcfce7',
+                  color: '#166534',
+                  padding: '4px 8px',
+                  borderRadius: '6px',
                   fontSize: '12px',
                   fontWeight: '500'
                 }}>
@@ -256,6 +261,13 @@ const AddPositions = () => {
                 <strong style={{ color: '#374151', fontSize: '14px' }}>Experience Required:</strong>
                 <p style={{ color: '#6b7280', margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.5' }}>
                   {job.experience}
+                </p>
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <strong style={{ color: '#374151', fontSize: '14px' }}>Openings:</strong>
+                <p style={{ color: '#6b7280', margin: '4px 0 0 0', fontSize: '14px', lineHeight: '1.5' }}>
+                  {job.openings} {job.openings === 1 ? 'opening' : 'openings'}
                 </p>
               </div>
 
@@ -283,7 +295,7 @@ const AddPositions = () => {
                   📄 View Job Description
                 </button>
               )}
-              
+
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button
                   onClick={() => handleEdit(job)}
@@ -325,8 +337,8 @@ const AddPositions = () => {
 
       {/* Empty State */}
       {!loading && filteredJobs.length === 0 && (
-        <div style={{ 
-          textAlign: 'center', 
+        <div style={{
+          textAlign: 'center',
           padding: '60px 20px',
           backgroundColor: 'white',
           border: '1px solid #e5e7eb',
@@ -423,7 +435,7 @@ const AddPositions = () => {
                   />
                 </div>
               )}
-              
+
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', color: '#374151' }}>
                   Position Title *
@@ -487,6 +499,28 @@ const AddPositions = () => {
                     }}
                   />
                 </div>
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', color: '#374151' }}>
+                    Number of Openings *
+                  </label>
+                  <input
+                    type="number"
+                    name="openings"
+                    placeholder="e.g., 3"
+                    value={formData.openings}
+                    onChange={handleChange}
+                    min={1}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+
               </div>
 
               <div style={{ marginBottom: '24px' }}>
