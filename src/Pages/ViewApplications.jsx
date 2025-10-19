@@ -108,7 +108,7 @@ const MobileApplicationCard = ({ application, index, onShortlist, onViewResume }
           </div>
           <div>
             <h3 className="font-semibold text-gray-900">{application.name}</h3>
-            <p className="text-sm text-gray-500">Job ID: {application.jobId}</p>
+            <p className="text-sm text-gray-500">Job Position: {application.position || "N/A"}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -543,7 +543,7 @@ const ViewApplications = () => {
                         onClick={() => handleSort('jobId')}
                       >
                         <div className="flex items-center gap-1">
-                          Job ID
+                          Job Position
                           {getSortIcon('jobId')}
                         </div>
                       </th>
@@ -605,7 +605,7 @@ const ViewApplications = () => {
                         </td>
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {app.jobId}
+                            {app.position || "N/A"}
                           </span>
                         </td>
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
