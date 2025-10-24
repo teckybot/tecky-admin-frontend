@@ -91,7 +91,8 @@ const ResumeModal = ({ show, onClose, resumeUrl, applicantName }) => {
   );
 };
 
-const MobileApplicationCard = ({ application, index, onShortlist, onViewResume }) => {
+
+const MobileApplicationCard = ({ application, index, onUpdateStatus, onViewResume }) => {
   const [showActions, setShowActions] = useState(false);
 
   return (
@@ -112,15 +113,7 @@ const MobileApplicationCard = ({ application, index, onShortlist, onViewResume }
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => onShortlist(application._id, !application.shortlisted)}
-            className={`p-2 rounded-lg transition-colors duration-200 ${application.shortlisted
-              ? 'text-yellow-500 bg-yellow-50'
-              : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-50'
-              }`}
-          >
-            {application.shortlisted ? <Star className="w-5 h-5" /> : <Star className="w-5 h-5" />}
-          </button>
+
           <div className="relative">
             <button
               onClick={() => setShowActions(!showActions)}
@@ -166,12 +159,26 @@ const MobileApplicationCard = ({ application, index, onShortlist, onViewResume }
 
       {/* Status */}
       <div className="flex justify-between items-center">
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${application.shortlisted
-          ? 'bg-green-100 text-green-800 border border-green-200'
-          : 'bg-gray-100 text-gray-600 border border-gray-200'
-          }`}>
-          {application.shortlisted ? 'Shortlisted ★' : 'Under Review'}
-        </span>
+        <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
+          <select
+            value={application.status}
+            onChange={(e) => onUpdateStatus(application._id, e.target.value)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50
+        ${application.status === "shortlisted"
+                ? "bg-green-50 text-green-700 border-green-200 focus:ring-green-500"
+                : application.status === "rejected"
+                  ? "bg-red-50 text-red-700 border-red-200 focus:ring-red-500"
+                  : "bg-yellow-50 text-yellow-700 border-yellow-200 focus:ring-yellow-500"
+              }`}
+          >
+            <option value="pending">Pending</option>
+            <option value="shortlisted">Shortlisted</option>
+            <option value="rejected">Rejected</option>
+          </select>
+
+
+        </td>
+
         {application.resumeUrl && (
           <button
             onClick={() => onViewResume(application.resumeUrl, application.name)}
@@ -243,16 +250,19 @@ const ViewApplications = () => {
   };
 
   // Shortlist functionality
-  const handleShortlist = async (applicationId, shortlisted) => {
+  const handleShortlist = async (applicationId, status) => {
     try {
-      await updateApplicationStatus(applicationId, { shortlisted });
-      setApplications(prev => prev.map(app =>
-        app._id === applicationId ? { ...app, shortlisted } : app
-      ));
+      await updateApplicationStatus(applicationId, { status });
+      setApplications(prev =>
+        prev.map(app =>
+          app._id === applicationId ? { ...app, status } : app
+        )
+      );
     } catch (err) {
       console.error("Failed to update application status:", err);
     }
   };
+
 
   const [statusFilter, setStatusFilter] = useState(""); // "" = All, "shortlisted", "notShortlisted"
 
@@ -270,8 +280,8 @@ const ViewApplications = () => {
 
       const matchesStatus =
         statusFilter === "" ||
-        (statusFilter === "shortlisted" && app.shortlisted) ||
-        (statusFilter === "notShortlisted" && !app.shortlisted);
+        app.status === statusFilter;
+
 
       return matchesSearch && matchesJobId && matchesStatus;
     });
@@ -456,8 +466,9 @@ const ViewApplications = () => {
                   className="pl-3 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#FF721F] focus:border-transparent bg-gray-50 text-sm sm:text-base"
                 >
                   <option value="">All</option>
+                  <option value="pending">Pending</option>
                   <option value="shortlisted">Shortlisted</option>
-                  <option value="notShortlisted">Not Shortlisted</option>
+                  <option value="rejected">Rejected</option>
                 </select>
               </div>
 
@@ -521,7 +532,7 @@ const ViewApplications = () => {
                 key={app._id}
                 application={app}
                 index={startIndex + index + 1}
-                onShortlist={handleShortlist}
+                onUpdateStatus={handleShortlist}
                 onViewResume={openResume}
               />
             ))}
@@ -618,16 +629,24 @@ const ViewApplications = () => {
                           {app.phone}
                         </td>
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
-                          <button
-                            onClick={() => handleShortlist(app._id, !app.shortlisted)}
-                            className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border transition-colors duration-200 ${app.shortlisted
-                              ? 'bg-amber-400 text-white  border border-amber-500'
-                              : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                          <select
+                            value={app.status}
+                            onChange={(e) => handleShortlist(app._id, e.target.value)}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50
+                                 ${app.status === "shortlisted"
+                                ? "bg-green-50 text-green-700 border-green-200 focus:ring-green-500"
+                                : app.status === "rejected"
+                                  ? "bg-red-50 text-red-700 border-red-200 focus:ring-red-500"
+                                  : "bg-yellow-50 text-yellow-700 border-yellow-200 focus:ring-yellow-500"
                               }`}
                           >
-                            {app.shortlisted ? <Star className="w-3 h-3" /> : <Star className="w-3 h-3" />}
-                            {app.shortlisted ? 'Shortlisted' : 'Shortlist'}
-                          </button>
+                            <option value="pending">Pending</option>
+                            <option value="shortlisted">Shortlisted</option>
+                            <option value="rejected">Rejected</option>
+                          </select>
+
+
+
                         </td>
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
                           {app.resumeUrl ? (
